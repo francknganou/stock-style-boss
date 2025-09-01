@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle } from "lucide-react";
+import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle, Store, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -26,18 +26,21 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card">
+      <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-foreground">StockManager Pro</h1>
-            <nav className="flex gap-4">
-              <Button variant="ghost" asChild>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">StockManager Pro</h1>
+            <nav className="flex gap-2">
+              <Button variant="outline" asChild className="hover:bg-primary/10 hover:text-primary border-primary/20">
                 <Link to="/products">Produits</Link>
               </Button>
-              <Button variant="ghost" asChild>
+              <Button variant="outline" asChild className="hover:bg-accent/10 hover:text-accent border-accent/20">
                 <Link to="/stock">Stock</Link>
               </Button>
-              <Button variant="ghost" asChild>
+              <Button variant="outline" asChild className="hover:bg-secondary/20 hover:text-secondary-foreground border-secondary/30">
+                <Link to="/stores">Magasins</Link>
+              </Button>
+              <Button asChild className="bg-primary hover:bg-primary/90">
                 <Link to="/transactions">Transactions</Link>
               </Button>
             </nav>
@@ -54,40 +57,40 @@ const Index = () => {
 
         {/* Métriques principales */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card>
+          <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Stock Total</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
+              <Package className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData.totalStock}</div>
+              <div className="text-2xl font-bold text-primary">{dashboardData.totalStock}</div>
               <p className="text-xs text-muted-foreground">articles en stock</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-accent/10 to-accent/5 border-accent/20 hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Valeur Stock</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <TrendingUp className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData.stockValue.toLocaleString()} €</div>
+              <div className="text-2xl font-bold text-accent">{dashboardData.stockValue.toLocaleString()} €</div>
               <p className="text-xs text-muted-foreground">valeur totale</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-secondary/20 to-secondary/10 border-secondary/30 hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Ventes Aujourd'hui</CardTitle>
-              <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              <ShoppingCart className="h-4 w-4 text-secondary-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{dashboardData.todaySales}</div>
+              <div className="text-2xl font-bold text-secondary-foreground">{dashboardData.todaySales}</div>
               <p className="text-xs text-muted-foreground">articles vendus</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gradient-to-br from-destructive/20 to-destructive/10 border-destructive/30 hover:shadow-lg transition-shadow">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Stock Faible</CardTitle>
               <AlertTriangle className="h-4 w-4 text-destructive" />
@@ -166,28 +169,34 @@ const Index = () => {
         </div>
 
         {/* Actions rapides */}
-        <Card>
-          <CardHeader>
+        <Card className="shadow-lg">
+          <CardHeader className="bg-gradient-to-r from-primary/5 to-accent/5">
             <CardTitle>Actions Rapides</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button className="h-20 flex flex-col gap-2" asChild>
-                <Link to="/products/new">
+          <CardContent className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Button className="h-20 flex flex-col gap-2 bg-primary hover:bg-primary/90" asChild>
+                <Link to="/products">
                   <Package className="h-6 w-6" />
-                  Ajouter Produit
+                  Gérer Produits
                 </Link>
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2" asChild>
-                <Link to="/stock/entry">
-                  <TrendingUp className="h-6 w-6" />
-                  Entrée Stock
+              <Button variant="outline" className="h-20 flex flex-col gap-2 border-accent hover:bg-accent/10 hover:text-accent" asChild>
+                <Link to="/stock">
+                  <BarChart3 className="h-6 w-6" />
+                  Voir Stock
                 </Link>
               </Button>
-              <Button variant="outline" className="h-20 flex flex-col gap-2" asChild>
-                <Link to="/stock/exit">
-                  <TrendingDown className="h-6 w-6" />
-                  Sortie Stock
+              <Button variant="outline" className="h-20 flex flex-col gap-2 border-secondary hover:bg-secondary/20 hover:text-secondary-foreground" asChild>
+                <Link to="/stores">
+                  <Store className="h-6 w-6" />
+                  Gérer Magasins
+                </Link>
+              </Button>
+              <Button variant="outline" className="h-20 flex flex-col gap-2 border-warning hover:bg-warning/20 hover:text-warning-foreground" asChild>
+                <Link to="/transactions">
+                  <ShoppingCart className="h-6 w-6" />
+                  Transactions
                 </Link>
               </Button>
             </div>
