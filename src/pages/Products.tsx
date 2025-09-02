@@ -19,12 +19,12 @@ const Products = () => {
 
   // Données simulées des produits
   const products = [
-    { id: 1, name: "Nike Air Max 90", category: "Chaussures", brand: "Nike", price: 120, stock: 25, minStock: 5, status: "En stock" },
-    { id: 2, name: "Adidas Ultraboost", category: "Chaussures", brand: "Adidas", price: 180, stock: 3, minStock: 5, status: "Stock faible" },
-    { id: 3, name: "Polo Lacoste Classic", category: "Vêtements", brand: "Lacoste", price: 85, stock: 45, minStock: 10, status: "En stock" },
-    { id: 4, name: "Jean Levi's 501", category: "Vêtements", brand: "Levi's", price: 95, stock: 0, minStock: 8, status: "Rupture" },
-    { id: 5, name: "T-shirt Hugo Boss", category: "Vêtements", brand: "Hugo Boss", price: 65, stock: 18, minStock: 5, status: "En stock" },
-    { id: 6, name: "Converse Chuck Taylor", category: "Chaussures", brand: "Converse", price: 70, stock: 32, minStock: 8, status: "En stock" },
+    { id: 1, name: "Nike Air Max 90", category: "Chaussures", brand: "Nike", price: 60000, stock: 25, minStock: 5, status: "En stock" },
+    { id: 2, name: "Adidas Ultraboost", category: "Chaussures", brand: "Adidas", price: 90000, stock: 3, minStock: 5, status: "Stock faible" },
+    { id: 3, name: "Polo Lacoste Classic", category: "Vêtements", brand: "Lacoste", price: 42500, stock: 45, minStock: 10, status: "En stock" },
+    { id: 4, name: "Jean Levi's 501", category: "Vêtements", brand: "Levi's", price: 47500, stock: 0, minStock: 8, status: "Rupture" },
+    { id: 5, name: "T-shirt Hugo Boss", category: "Vêtements", brand: "Hugo Boss", price: 32500, stock: 18, minStock: 5, status: "En stock" },
+    { id: 6, name: "Converse Chuck Taylor", category: "Chaussures", brand: "Converse", price: 35000, stock: 32, minStock: 8, status: "En stock" },
   ];
 
   const filteredProducts = products.filter(product =>
@@ -50,7 +50,7 @@ const Products = () => {
               <span className="text-muted-foreground">/</span>
               <h1 className="text-xl font-semibold">Produits</h1>
             </div>
-            <Button asChild>
+            <Button asChild className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70">
               <Link to="/products/new">
                 <Plus className="h-4 w-4 mr-2" />
                 Nouveau Produit
@@ -158,7 +158,7 @@ const Products = () => {
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>{product.category}</TableCell>
                     <TableCell>{product.brand}</TableCell>
-                    <TableCell>{product.price} €</TableCell>
+                    <TableCell>{product.price.toLocaleString()} FCFA</TableCell>
                     <TableCell>
                       <span className={product.stock <= product.minStock ? "font-bold text-destructive" : ""}>
                         {product.stock}

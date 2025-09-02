@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
 import { 
   Table, 
   TableBody, 
@@ -14,7 +15,8 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Store, MapPin, Phone, Plus, Edit, Eye } from "lucide-react";
+import { Store, MapPin, Phone, Plus, Edit, Eye, Package } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "react-router-dom";
 
 const Stores = () => {
@@ -26,7 +28,9 @@ const Stores = () => {
       phone: "+243 81 234 5678",
       manager: "Marie Mukendi",
       status: "Actif",
-      createdAt: "2024-01-10"
+      createdAt: "2024-01-10",
+      photo: "/placeholder.svg",
+      products: ["Nike Air Max 90", "T-shirt Hugo Boss", "Jean Levi's 501"]
     },
     { 
       id: 2, 
@@ -35,9 +39,21 @@ const Stores = () => {
       phone: "+243 82 345 6789",
       manager: "Jean Kabila",
       status: "Actif",
-      createdAt: "2024-01-15"
+      createdAt: "2024-01-15",
+      photo: "/placeholder.svg", 
+      products: ["Adidas Ultraboost", "Polo Lacoste Classic", "Converse Chuck Taylor"]
     },
   ]);
+
+  const [viewModalOpen, setViewModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedStore, setSelectedStore] = useState<any>(null);
+  const [editForm, setEditForm] = useState({
+    status: "",
+    statusDate: new Date(),
+    photo: "",
+    description: ""
+  });
 
   const [newStore, setNewStore] = useState({
     name: "",
@@ -58,7 +74,9 @@ const Stores = () => {
         phone: newStore.phone,
         manager: newStore.manager,
         status: "Actif",
-        createdAt: new Date().toISOString().split('T')[0]
+        createdAt: new Date().toISOString().split('T')[0],
+        photo: "/placeholder.svg",
+        products: []
       };
       setStores([...stores, store]);
       setNewStore({ name: "", address: "", phone: "", manager: "", description: "" });
@@ -244,10 +262,30 @@ const Stores = () => {
                     <TableCell className="text-muted-foreground">{store.createdAt}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex gap-2 justify-end">
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedStore(store);
+                            setViewModalOpen(true);
+                          }}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
-                        <Button size="sm" variant="outline">
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedStore(store);
+                            setEditForm({
+                              status: store.status,
+                              statusDate: new Date(),
+                              photo: store.photo || "",
+                              description: ""
+                            });
+                            setEditModalOpen(true);
+                          }}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
                       </div>
@@ -258,6 +296,144 @@ const Stores = () => {
             </Table>
           </CardContent>
         </Card>
+
+        {/* Modal de visualisation */}
+        <Dialog open={viewModalOpen} onOpenChange={setViewModalOpen}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Store className="h-5 w-5" />
+                Détails du Magasin
+              </DialogTitle>
+            </DialogHeader>
+            {selectedStore && (
+              <div className="space-y-6">
+                {/* Photo du magasin */}
+                <div className="flex justify-center">
+                  <img
+                    src={selectedStore.photo}
+                    alt={selectedStore.name}
+                    className="w-32 h-32 rounded-lg object-cover border-2 border-border"
+                  />
+                </div>
+                
+                {/* Informations générales */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="font-semibold">Nom</Label>
+                    <p className="mt-1">{selectedStore.name}</p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold">Statut</Label>
+                    <Badge variant="secondary" className="mt-1 bg-accent text-accent-foreground">
+                      {selectedStore.status}
+                    </Badge>
+                  </div>
+                  <div>
+                    <Label className="font-semibold">Responsable</Label>
+                    <p className="mt-1">{selectedStore.manager}</p>
+                  </div>
+                  <div>
+                    <Label className="font-semibold">Téléphone</Label>
+                    <p className="mt-1">{selectedStore.phone}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className="font-semibold">Adresse</Label>
+                  <p className="mt-1">{selectedStore.address}</p>
+                </div>
+
+                <Separator />
+
+                {/* Articles en stock */}
+                <div>
+                  <Label className="font-semibold text-lg">Articles en stock</Label>
+                  <div className="grid grid-cols-1 gap-2 mt-3">
+                    {selectedStore.products?.map((product: string, index: number) => (
+                      <div key={index} className="flex items-center gap-2 p-2 bg-muted/30 rounded">
+                        <Package className="h-4 w-4 text-primary" />
+                        <span>{product}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Modal de modification */}
+        <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Modifier le Magasin</DialogTitle>
+            </DialogHeader>
+            {selectedStore && (
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="status">Statut</Label>
+                  <Select 
+                    value={editForm.status} 
+                    onValueChange={(value) => setEditForm(prev => ({ ...prev, status: value }))}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Actif">Actif</SelectItem>
+                      <SelectItem value="Inactif">Inactif</SelectItem>
+                      <SelectItem value="Maintenance">En maintenance</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="photo">Photo (URL)</Label>
+                  <Input
+                    id="photo"
+                    placeholder="URL de la photo"
+                    value={editForm.photo}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, photo: e.target.value }))}
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Informations complémentaires..."
+                    value={editForm.description}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                    className="mt-1"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex gap-2 justify-end pt-4">
+                  <Button variant="outline" onClick={() => setEditModalOpen(false)}>
+                    Annuler
+                  </Button>
+                  <Button 
+                    onClick={() => {
+                      // Mise à jour simulée
+                      setStores(prev => prev.map(store => 
+                        store.id === selectedStore.id 
+                          ? { ...store, status: editForm.status, photo: editForm.photo }
+                          : store
+                      ));
+                      setEditModalOpen(false);
+                    }}
+                    className="bg-primary hover:bg-primary/90"
+                  >
+                    Sauvegarder
+                  </Button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );

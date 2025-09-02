@@ -3,18 +3,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle, Store, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
+import BackButton from "@/components/BackButton";
 
 const Index = () => {
-  // Données simulées pour le tableau de bord
-  const dashboardData = {
-    totalStock: 1250,
-    stockValue: 45600,
-    lowStockItems: 8,
-    todaySales: 12,
-    weeklyEntries: 45,
-    weeklyExits: 38,
-    totalCategories: 4
-  };
+  const totalSoldToday = 127500;
+  const totalRevenue = 892500;
 
   const recentTransactions = [
     { id: 1, type: "Entrée", product: "Nike Air Max", quantity: 10, date: "2024-01-15" },
@@ -24,7 +17,9 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
+      <BackButton />
+      
       {/* Header */}
       <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto px-6 py-4">
@@ -63,7 +58,7 @@ const Index = () => {
               <Package className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-primary">{dashboardData.totalStock}</div>
+              <div className="text-2xl font-bold text-primary">{totalSoldToday.toLocaleString()}</div>
               <p className="text-xs text-muted-foreground">articles en stock</p>
             </CardContent>
           </Card>
@@ -74,7 +69,7 @@ const Index = () => {
               <TrendingUp className="h-4 w-4 text-accent" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-accent">{dashboardData.stockValue.toLocaleString()} €</div>
+              <div className="text-2xl font-bold text-accent">{totalRevenue.toLocaleString()} FCFA</div>
               <p className="text-xs text-muted-foreground">valeur totale</p>
             </CardContent>
           </Card>
@@ -85,7 +80,7 @@ const Index = () => {
               <ShoppingCart className="h-4 w-4 text-secondary-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-secondary-foreground">{dashboardData.todaySales}</div>
+              <div className="text-2xl font-bold text-secondary-foreground">12</div>
               <p className="text-xs text-muted-foreground">articles vendus</p>
             </CardContent>
           </Card>
@@ -96,7 +91,7 @@ const Index = () => {
               <AlertTriangle className="h-4 w-4 text-destructive" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-destructive">{dashboardData.lowStockItems}</div>
+              <div className="text-2xl font-bold text-destructive">8</div>
               <p className="text-xs text-muted-foreground">articles à réapprovisionner</p>
             </CardContent>
           </Card>
@@ -117,7 +112,7 @@ const Index = () => {
                   <span className="text-sm text-muted-foreground">Entrées</span>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="bg-primary/10 text-primary">
-                      +{dashboardData.weeklyEntries}
+                      +45
                     </Badge>
                   </div>
                 </div>
@@ -125,7 +120,7 @@ const Index = () => {
                   <span className="text-sm text-muted-foreground">Sorties</span>
                   <div className="flex items-center gap-2">
                     <Badge variant="secondary" className="bg-destructive/10 text-destructive">
-                      -{dashboardData.weeklyExits}
+                      -38
                     </Badge>
                   </div>
                 </div>
@@ -133,7 +128,7 @@ const Index = () => {
                   <div className="flex justify-between items-center font-medium">
                     <span>Solde net</span>
                     <Badge variant="outline" className="text-primary">
-                      +{dashboardData.weeklyEntries - dashboardData.weeklyExits}
+                      +7
                     </Badge>
                   </div>
                 </div>
