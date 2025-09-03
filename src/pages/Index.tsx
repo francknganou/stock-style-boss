@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle, Store, BarChart3, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
-import BackButton from "@/components/BackButton";
 
 const Index = () => {
   const totalSoldToday = 127500;
