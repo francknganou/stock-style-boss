@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle, Store, BarChart3 } from "lucide-react";
+import { Package, TrendingUp, TrendingDown, ShoppingCart, Users, AlertTriangle, Store, BarChart3, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackButton from "@/components/BackButton";
 
@@ -18,7 +18,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <BackButton />
+      
       
       {/* Header */}
       <header className="border-b bg-card shadow-sm">
@@ -34,6 +34,9 @@ const Index = () => {
               </Button>
               <Button variant="outline" asChild className="hover:bg-secondary/20 hover:text-secondary-foreground border-secondary/30">
                 <Link to="/stores">Magasins</Link>
+              </Button>
+              <Button variant="outline" asChild className="hover:bg-warning/20 hover:text-warning-foreground border-warning/30">
+                <Link to="/settings">Paramètres</Link>
               </Button>
               <Button asChild className="bg-primary hover:bg-primary/90">
                 <Link to="/transactions">Transactions</Link>
@@ -169,7 +172,7 @@ const Index = () => {
             <CardTitle>Actions Rapides</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <Button className="h-20 flex flex-col gap-2 bg-primary hover:bg-primary/90" asChild>
                 <Link to="/products">
                   <Package className="h-6 w-6" />
@@ -189,6 +192,12 @@ const Index = () => {
                 </Link>
               </Button>
               <Button variant="outline" className="h-20 flex flex-col gap-2 border-warning hover:bg-warning/20 hover:text-warning-foreground" asChild>
+                <Link to="/settings">
+                  <Settings className="h-6 w-6" />
+                  Paramètres
+                </Link>
+              </Button>
+              <Button variant="outline" className="h-20 flex flex-col gap-2 border-info hover:bg-info/20 hover:text-info-foreground" asChild>
                 <Link to="/transactions">
                   <ShoppingCart className="h-6 w-6" />
                   Transactions

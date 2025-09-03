@@ -265,12 +265,11 @@ const Stores = () => {
                         <Button 
                           size="sm" 
                           variant="outline"
-                          onClick={() => {
-                            setSelectedStore(store);
-                            setViewModalOpen(true);
-                          }}
+                          asChild
                         >
-                          <Eye className="h-4 w-4" />
+                          <Link to={`/stores/${store.id}`}>
+                            <Eye className="h-4 w-4" />
+                          </Link>
                         </Button>
                         <Button 
                           size="sm" 

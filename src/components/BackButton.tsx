@@ -12,8 +12,7 @@ const BackButton = () => {
       onClick={() => navigate(-1)}
       className="absolute left-6 top-6 z-50 bg-background/80 backdrop-blur-sm border shadow-sm hover:shadow-md"
     >
-      <ArrowLeft className="h-4 w-4 mr-2" />
-      Retour
+      <ArrowLeft className="h-4 w-4" />
     </Button>
   );
 };
