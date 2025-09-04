@@ -14,15 +14,18 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Search, Calendar, Euro, ShoppingCart, User, Plus, Store as StoreIcon, DollarSign, Package } from "lucide-react";
+import { Search, Calendar, Euro, ShoppingCart, User, Plus, Store as StoreIcon, DollarSign, Package, Printer } from "lucide-react";
 import { Link } from "react-router-dom";
 import StoreSelector from "@/components/StoreSelector";
+import BackButton from "@/components/BackButton";
+import { useToast } from "@/hooks/use-toast";
 
 const Transactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [dateFilter, setDateFilter] = useState("");
   const [isNewSaleOpen, setIsNewSaleOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<number | null>(null);
+  const { toast } = useToast();
   
   const stores = [
     { id: 1, name: "Boutique Centre-Ville" },
@@ -44,10 +47,10 @@ const Transactions = () => {
       customer: "Marie Dupont", 
       store: "Boutique Centre-Ville",
       items: [
-        { product: "Nike Air Max 90", quantity: 1, price: 120 },
-        { product: "T-shirt Hugo Boss", quantity: 2, price: 65 }
+        { product: "Nike Air Max 90", quantity: 1, price: 60000 },
+        { product: "T-shirt Hugo Boss", quantity: 2, price: 32500 }
       ],
-      total: 250, 
+      total: 125000,
       date: "2024-01-15", 
       time: "14:30",
       paymentMethod: "Carte Bancaire",
@@ -59,9 +62,9 @@ const Transactions = () => {
       customer: "Jean Martin", 
       store: "Boutique Gombe",
       items: [
-        { product: "Jean Levi's 501", quantity: 1, price: 95 }
+        { product: "Jean Levi's 501", quantity: 1, price: 47500 }
       ],
-      total: -95, 
+      total: -47500,
       date: "2024-01-15", 
       time: "11:15",
       paymentMethod: "Remboursement CB",
@@ -73,10 +76,10 @@ const Transactions = () => {
       customer: "Sophie Laurent", 
       store: "Boutique Centre-Ville",
       items: [
-        { product: "Polo Lacoste Classic", quantity: 1, price: 85 },
-        { product: "Converse Chuck Taylor", quantity: 1, price: 70 }
+        { product: "Polo Lacoste Classic", quantity: 1, price: 42500 },
+        { product: "Converse Chuck Taylor", quantity: 1, price: 35000 }
       ],
-      total: 155, 
+      total: 77500,
       date: "2024-01-14", 
       time: "16:45",
       paymentMethod: "Espèces",
@@ -88,9 +91,9 @@ const Transactions = () => {
       customer: "Pierre Dubois", 
       store: "Boutique Matonge",
       items: [
-        { product: "Adidas Ultraboost", quantity: 1, price: 180 }
+        { product: "Adidas Ultraboost", quantity: 1, price: 90000 }
       ],
-      total: 180, 
+      total: 90000,
       date: "2024-01-14", 
       time: "10:20",
       paymentMethod: "Carte Bancaire",
@@ -102,9 +105,9 @@ const Transactions = () => {
       customer: "Alice Bernard", 
       store: "Boutique Gombe",
       items: [
-        { product: "T-shirt Hugo Boss", quantity: 3, price: 65 }
+        { product: "T-shirt Hugo Boss", quantity: 3, price: 32500 }
       ],
-      total: 195, 
+      total: 97500,
       date: "2024-01-13", 
       time: "15:10",
       paymentMethod: "Carte Bancaire",
@@ -154,8 +157,60 @@ const Transactions = () => {
       <div className="h-4 w-4 text-destructive">↩</div>;
   };
 
+  // Calcul des recettes par boutique
+  const getStoreRevenues = () => {
+    const revenues: { [key: string]: number } = {};
+    transactions
+      .filter(t => t.type === "Vente" && t.status === "Complétée")
+      .forEach(t => {
+        revenues[t.store] = (revenues[t.store] || 0) + t.total;
+      });
+    return revenues;
+  };
+
+  const storeRevenues = getStoreRevenues();
+  const totalRevenue = Object.values(storeRevenues).reduce((sum, revenue) => sum + revenue, 0);
+
+  const handlePrintReceipts = () => {
+    const printContent = `
+      <div style="font-family: Arial, sans-serif; padding: 20px;">
+        <h1 style="text-align: center; color: #333;">Recettes Journalières</h1>
+        <h2 style="text-align: center; color: #666;">${new Date().toLocaleDateString('fr-FR')}</h2>
+        <br/>
+        ${Object.entries(storeRevenues).map(([store, revenue]) => `
+          <div style="margin: 15px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <h3 style="color: #333; margin: 0;">${store}</h3>
+            <p style="font-size: 18px; font-weight: bold; color: #2563eb; margin: 5px 0;">
+              ${revenue.toLocaleString()} FCFA
+            </p>
+          </div>
+        `).join('')}
+        <hr style="margin: 20px 0;"/>
+        <div style="text-align: center; background: #f8f9fa; padding: 15px; border-radius: 5px;">
+          <h2 style="color: #333; margin: 0;">Total Général</h2>
+          <p style="font-size: 24px; font-weight: bold; color: #dc2626; margin: 10px 0;">
+            ${totalRevenue.toLocaleString()} FCFA
+          </p>
+        </div>
+      </div>
+    `;
+    
+    const printWindow = window.open('', '_blank');
+    if (printWindow) {
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
+    }
+    
+    toast({
+      title: "Impression lancée",
+      description: "Le rapport des recettes est en cours d'impression.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <BackButton />
       {/* Header */}
       <header className="border-b bg-card shadow-sm">
         <div className="container mx-auto px-6 py-4">
@@ -279,10 +334,10 @@ const Transactions = () => {
                 <div className="p-3 rounded-full bg-primary/20">
                   <DollarSign className="h-6 w-6 text-primary" />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-primary">{stats.totalSales.toLocaleString()} €</p>
-                  <p className="text-sm text-muted-foreground">Ventes Totales</p>
-                </div>
+                 <div>
+                   <p className="text-2xl font-bold text-primary">{stats.totalSales.toLocaleString()} FCFA</p>
+                   <p className="text-sm text-muted-foreground">Ventes Totales</p>
+                 </div>
               </div>
             </CardContent>
           </Card>
@@ -292,10 +347,10 @@ const Transactions = () => {
                 <div className="p-3 rounded-full bg-destructive/20">
                   <Package className="h-6 w-6 text-destructive" />
                 </div>
-                <div>
-                  <p className="text-2xl font-bold text-destructive">{stats.totalReturns.toLocaleString()} €</p>
-                  <p className="text-sm text-muted-foreground">Retours</p>
-                </div>
+                 <div>
+                   <p className="text-2xl font-bold text-destructive">{stats.totalReturns.toLocaleString()} FCFA</p>
+                   <p className="text-sm text-muted-foreground">Retours</p>
+                 </div>
               </div>
             </CardContent>
           </Card>
@@ -326,6 +381,35 @@ const Transactions = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Recettes par boutique */}
+        <Card className="mb-6">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle>Recettes par Boutique</CardTitle>
+              <Button onClick={handlePrintReceipts} variant="outline" size="sm">
+                <Printer className="h-4 w-4 mr-2" />
+                Imprimer
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              {Object.entries(storeRevenues).map(([store, revenue]) => (
+                <div key={store} className="p-4 border border-border rounded-lg">
+                  <h3 className="font-medium text-sm text-muted-foreground">{store}</h3>
+                  <p className="text-xl font-bold text-primary">{revenue.toLocaleString()} FCFA</p>
+                </div>
+              ))}
+            </div>
+            <div className="border-t pt-4">
+              <div className="flex justify-between items-center">
+                <span className="text-lg font-medium">Total Général:</span>
+                <span className="text-2xl font-bold text-primary">{totalRevenue.toLocaleString()} FCFA</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recherche et filtres */}
         <Card className="mb-6">
@@ -408,11 +492,11 @@ const Transactions = () => {
                         ))}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <span className={transaction.total >= 0 ? "text-primary font-medium" : "text-destructive font-medium"}>
-                        {transaction.total >= 0 ? "+" : ""}{transaction.total.toLocaleString()} €
-                      </span>
-                    </TableCell>
+                     <TableCell>
+                       <span className={transaction.total >= 0 ? "text-primary font-medium" : "text-destructive font-medium"}>
+                         {transaction.total >= 0 ? "+" : ""}{transaction.total.toLocaleString()} FCFA
+                       </span>
+                     </TableCell>
                     <TableCell>
                       <div className="text-sm">
                         <div>{transaction.date}</div>

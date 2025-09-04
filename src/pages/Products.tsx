@@ -3,6 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { 
   Table, 
   TableBody, 
@@ -13,19 +16,22 @@ import {
 } from "@/components/ui/table";
 import { Package, Search, Plus, Edit, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import BackButton from "@/components/BackButton";
+import { useToast } from "@/hooks/use-toast";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
-
-  // Données simulées des produits
-  const products = [
+  const [products, setProducts] = useState([
     { id: 1, name: "Nike Air Max 90", category: "Chaussures", brand: "Nike", price: 60000, stock: 25, minStock: 5, status: "En stock" },
     { id: 2, name: "Adidas Ultraboost", category: "Chaussures", brand: "Adidas", price: 90000, stock: 3, minStock: 5, status: "Stock faible" },
     { id: 3, name: "Polo Lacoste Classic", category: "Vêtements", brand: "Lacoste", price: 42500, stock: 45, minStock: 10, status: "En stock" },
     { id: 4, name: "Jean Levi's 501", category: "Vêtements", brand: "Levi's", price: 47500, stock: 0, minStock: 8, status: "Rupture" },
     { id: 5, name: "T-shirt Hugo Boss", category: "Vêtements", brand: "Hugo Boss", price: 32500, stock: 18, minStock: 5, status: "En stock" },
     { id: 6, name: "Converse Chuck Taylor", category: "Chaussures", brand: "Converse", price: 35000, stock: 32, minStock: 8, status: "En stock" },
-  ];
+  ]);
+  const [editProduct, setEditProduct] = useState<any>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const { toast } = useToast();
 
   const filteredProducts = products.filter(product =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -39,8 +45,32 @@ const Products = () => {
     return <Badge variant="secondary" className="bg-primary/10 text-primary">En stock</Badge>;
   };
 
+  const handleEditProduct = (product: any) => {
+    setEditProduct(product);
+    setIsEditOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    setProducts(products.map(p => p.id === editProduct.id ? editProduct : p));
+    setIsEditOpen(false);
+    toast({
+      title: "Produit modifié",
+      description: "Les modifications ont été sauvegardées avec succès.",
+    });
+  };
+
+  const handleDeleteProduct = (productId: number) => {
+    setProducts(products.filter(p => p.id !== productId));
+    toast({
+      title: "Produit supprimé",
+      description: "Le produit a été supprimé avec succès.",
+      variant: "destructive"
+    });
+  };
+
   return (
     <div className="min-h-screen bg-background">
+      <BackButton />
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container mx-auto px-6 py-4">
@@ -168,12 +198,34 @@ const Products = () => {
                     <TableCell>{getStatusBadge(product.status, product.stock, product.minStock)}</TableCell>
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEditProduct(product)}
+                        >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Êtes-vous sûr de vouloir supprimer "{product.name}" ? Cette action ne peut pas être annulée.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Annuler</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteProduct(product.id)}>
+                                Supprimer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -183,6 +235,80 @@ const Products = () => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Dialog d'édition */}
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Modifier le produit</DialogTitle>
+          </DialogHeader>
+          {editProduct && (
+            <div className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="name">Nom du produit</Label>
+                <Input
+                  id="name"
+                  value={editProduct.name}
+                  onChange={(e) => setEditProduct({...editProduct, name: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="category">Catégorie</Label>
+                <Input
+                  id="category"
+                  value={editProduct.category}
+                  onChange={(e) => setEditProduct({...editProduct, category: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="brand">Marque</Label>
+                <Input
+                  id="brand"
+                  value={editProduct.brand}
+                  onChange={(e) => setEditProduct({...editProduct, brand: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="price">Prix (FCFA)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  value={editProduct.price}
+                  onChange={(e) => setEditProduct({...editProduct, price: parseInt(e.target.value)})}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="stock">Stock</Label>
+                  <Input
+                    id="stock"
+                    type="number"
+                    value={editProduct.stock}
+                    onChange={(e) => setEditProduct({...editProduct, stock: parseInt(e.target.value)})}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="minStock">Stock minimal</Label>
+                  <Input
+                    id="minStock"
+                    type="number"
+                    value={editProduct.minStock}
+                    onChange={(e) => setEditProduct({...editProduct, minStock: parseInt(e.target.value)})}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+          <div className="flex gap-2 justify-end">
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Annuler
+            </Button>
+            <Button onClick={handleSaveEdit}>
+              Sauvegarder
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import BackButton from "@/components/BackButton";
 import StoreSelector from "@/components/StoreSelector";
+import { useToast } from "@/hooks/use-toast";
 
 const StockExit = () => {
   const navigate = useNavigate();
